@@ -1,0 +1,1932 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IELTS 阅读查词本</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f4;
+      --panel: #ffffff;
+      --panel-soft: #f0f5f2;
+      --ink: #222624;
+      --muted: #68736e;
+      --line: #dce2dd;
+      --accent: #176b5b;
+      --accent-2: #a65d12;
+      --danger: #b42318;
+      --shadow: 0 18px 45px rgba(36, 43, 39, 0.09);
+      --radius: 8px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button,
+    a.button-link {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+
+    a.button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 13px;
+      text-decoration: none;
+    }
+
+    button:hover,
+    a.button-link:hover {
+      border-color: #a9b7af;
+      background: #f8faf8;
+    }
+
+    button:active,
+    a.button-link:active {
+      transform: translateY(1px);
+    }
+
+    button.primary,
+    a.button-link.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    button.primary:hover,
+    a.button-link.primary:hover {
+      background: #125649;
+    }
+
+    button.warn {
+      color: var(--danger);
+    }
+
+    button.small,
+    a.button-link.small {
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 13px;
+    }
+
+    .app {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 4px 18px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.4fr) minmax(300px, 0.7fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-header h2,
+    .panel-header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 720;
+    }
+
+    .panel-header span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .importer {
+      margin-bottom: 16px;
+    }
+
+    .import-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 118px;
+      resize: vertical;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      line-height: 1.55;
+      background: #fff;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(23, 107, 91, 0.16);
+      border-color: var(--accent);
+    }
+
+    .import-actions,
+    .extract-controls,
+    .reader-tools,
+    .lookup-actions,
+    .vocab-tools,
+    .stat-row,
+    .manual-row,
+    .source-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .file-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .file-button input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .reader {
+      min-height: 510px;
+      overflow: hidden;
+    }
+
+    .source-panel {
+      display: grid;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .source-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 10px 12px;
+      border-radius: 7px;
+      background: #fbfcfb;
+      border: 1px solid var(--line);
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .source-card {
+      display: grid;
+      gap: 9px;
+      min-height: 126px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .source-card strong {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .source-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .reader-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfb;
+    }
+
+    .reader-stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reader-stats strong {
+      color: var(--ink);
+      font-weight: 720;
+    }
+
+    .article {
+      height: clamp(760px, 88vh, 1120px);
+      min-height: 760px;
+      overflow: auto;
+      padding: 32px clamp(24px, 4vw, 64px) 52px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      line-height: 1.95;
+      white-space: pre-wrap;
+      background: linear-gradient(180deg, #fff 0%, #fff 72%, #fbfbf8 100%);
+    }
+
+    .article.empty {
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      text-align: center;
+      padding: 28px;
+    }
+
+    .word {
+      display: inline;
+      border-radius: 5px;
+      padding: 1px 2px;
+      cursor: pointer;
+      transition: background 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .word:hover {
+      background: #e7f1ed;
+      box-shadow: 0 0 0 2px #e7f1ed;
+    }
+
+    .word.selected {
+      background: #fff1db;
+      box-shadow: 0 0 0 2px #fff1db;
+    }
+
+    .word.saved {
+      text-decoration: underline;
+      text-decoration-color: var(--accent-2);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+
+    .side {
+      display: grid;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+      overflow: auto;
+      padding-bottom: 16px;
+    }
+
+    .lookup-body {
+      padding: 16px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .selected-word {
+      min-height: 64px;
+      display: grid;
+      gap: 4px;
+      padding: 14px;
+      border-radius: 7px;
+      background: var(--panel-soft);
+      border: 1px solid #d8e8df;
+    }
+
+    .selected-word strong {
+      font-size: 26px;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .selected-word span,
+    .source {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .translation {
+      min-height: 58px;
+      padding: 13px 14px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+    }
+
+    .translation-main {
+      font-size: 18px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .context {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      padding: 10px 12px;
+      border-left: 3px solid #d7a65f;
+      background: #fffaf2;
+      border-radius: 0 7px 7px 0;
+      max-height: 94px;
+      overflow: auto;
+    }
+
+    .manual-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    input,
+    select {
+      min-height: 36px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    input[type="checkbox"] {
+      min-height: auto;
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    .extract-controls {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fbfcfb;
+      align-items: center;
+    }
+
+    .check-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--ink);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .extract-status {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    #ocrPageRange {
+      width: 150px;
+      min-width: 130px;
+      flex: 0 1 170px;
+    }
+
+    .lookup-actions button {
+      flex: 1 1 150px;
+    }
+
+    .vocab-body {
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat {
+      min-height: 68px;
+      padding: 11px;
+      border-radius: 7px;
+      background: #f8faf8;
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .vocab-filters {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 126px;
+      gap: 8px;
+    }
+
+    .export-port {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fbfcfb;
+    }
+
+    .export-port .source {
+      margin-right: 2px;
+    }
+
+    .vocab-list {
+      display: grid;
+      gap: 8px;
+      min-height: 520px;
+      max-height: clamp(520px, 58vh, 820px);
+      overflow: auto;
+      padding-right: 2px;
+      align-content: start;
+    }
+
+    .vocab-item {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 11px;
+      background: #fff;
+      display: grid;
+      gap: 8px;
+    }
+
+    .vocab-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .vocab-word {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .vocab-word strong {
+      font-size: 17px;
+      word-break: break-word;
+    }
+
+    .vocab-word span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .count-pill {
+      min-width: 48px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      background: #e7f1ed;
+      color: var(--accent);
+      font-weight: 720;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bar {
+      height: 5px;
+      border-radius: 999px;
+      background: #edf0ed;
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: var(--w, 0%);
+      background: linear-gradient(90deg, var(--accent), #d28d3d);
+    }
+
+    .vocab-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      text-align: center;
+      border: 1px dashed #cfd7d1;
+      border-radius: 7px;
+      padding: 24px 16px;
+      line-height: 1.6;
+      background: #fbfcfb;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(20px);
+      min-width: min(420px, calc(100vw - 34px));
+      padding: 11px 14px;
+      border-radius: 7px;
+      background: #1d2521;
+      color: #fff;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      text-align: center;
+      font-size: 14px;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .kbd {
+      font-family: var(--mono);
+      font-size: 12px;
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      padding: 1px 5px;
+      border-radius: 5px;
+      color: var(--muted);
+      background: #fff;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+        max-height: none;
+        overflow: visible;
+        padding-bottom: 0;
+      }
+
+      .article {
+        height: auto;
+        max-height: none;
+        min-height: 560px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        padding: 10px;
+      }
+
+      .topbar,
+      .reader-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .top-actions,
+      .reader-tools {
+        justify-content: flex-start;
+      }
+
+      .stat-row,
+      .manual-row,
+      .vocab-filters,
+      .source-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .article {
+        padding: 20px 16px 32px;
+        font-size: 18px;
+        min-height: 460px;
+        line-height: 1.85;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>IELTS 阅读查词本</h1>
+        <p>导入阅读文章，点击英文单词查中文释义，再按需加入生词本。</p>
+      </div>
+      <div class="top-actions">
+        <button id="loadSampleBtn" type="button">载入示例</button>
+        <button id="clearArticleBtn" type="button">清空文章</button>
+        <button id="exportBtn" type="button">导出生词 CSV</button>
+      </div>
+    </header>
+
+    <section class="layout">
+      <div>
+        <section class="panel importer" aria-labelledby="import-title">
+          <div class="panel-header">
+            <h2 id="import-title">导入文章</h2>
+            <span>支持粘贴文本、TXT 或 PDF</span>
+          </div>
+          <div class="import-body">
+            <textarea id="articleInput" placeholder="把雅思阅读文章粘贴到这里，或点击下方导入 TXT/PDF 文件。"></textarea>
+            <div class="import-actions">
+              <button id="renderBtn" class="primary" type="button">开始阅读</button>
+              <label class="file-button">
+                导入 TXT/PDF
+                <input id="fileInput" type="file" accept=".txt,.pdf,text/plain,application/pdf" />
+              </label>
+              <button id="pasteSavedBtn" type="button">恢复上次文章</button>
+            </div>
+            <div class="extract-controls">
+              <label class="check-row">
+                <input id="extractReadingToggle" type="checkbox" checked />
+                <span>PDF 导入时自动提取 Reading 部分</span>
+              </label>
+              <label class="check-row">
+                <input id="autoOcrToggle" type="checkbox" />
+                <span>扫描版无文字时自动 OCR</span>
+              </label>
+              <input id="ocrPageRange" type="text" placeholder="OCR 页码，如 4-12" aria-label="OCR 页码范围" />
+              <button id="ocrCurrentPdfBtn" class="small" type="button" hidden>OCR 当前 PDF</button>
+              <button id="extractReadingBtn" class="small" type="button">从当前文本提取 Reading</button>
+              <button id="restorePdfTextBtn" class="small" type="button" hidden>查看完整 PDF 文本</button>
+              <span id="extractStatus" class="extract-status">适用于带文字层的 PDF；扫描版可用 OCR，建议先填 Reading 所在页码。</span>
+            </div>
+            <div class="source-panel" aria-label="官方样题来源">
+              <div class="source-note">
+                官方免费材料可打开后下载或复制，再用上方导入。页面不内置受版权保护的真题全文；你已有的合法 PDF/TXT 可直接导入本地阅读。
+              </div>
+              <div class="source-grid">
+                <div class="source-card">
+                  <strong>IELTS.org 学术类阅读样题 PDF</strong>
+                  <span>官方 Academic Reading sample tasks，适合下载后导入。</span>
+                  <div class="source-actions">
+                    <a class="button-link small primary" href="https://ielts.org/cdn/Sample-tests/ielts-academic-reading-sample-tasks-2023.pdf" target="_blank" rel="noopener">打开 PDF</a>
+                    <a class="button-link small" href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test" target="_blank" rel="noopener">来源页</a>
+                  </div>
+                </div>
+                <div class="source-card">
+                  <strong>IELTS.org 培训类阅读样题 PDF</strong>
+                  <span>官方 General Training Reading sample tasks，适合下载后导入。</span>
+                  <div class="source-actions">
+                    <a class="button-link small primary" href="https://ielts.org/cdn/Sample-tests/ielts-general-reading-sample-tasks-2023.pdf" target="_blank" rel="noopener">打开 PDF</a>
+                    <a class="button-link small" href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions/general-training-test" target="_blank" rel="noopener">来源页</a>
+                  </div>
+                </div>
+                <div class="source-card">
+                  <strong>British Council 阅读练习</strong>
+                  <span>官方免费阅读练习页，含 Academic 与 General Training 入口。</span>
+                  <div class="source-actions">
+                    <a class="button-link small primary" href="https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests/reading" target="_blank" rel="noopener">打开网页</a>
+                  </div>
+                </div>
+                <div class="source-card">
+                  <strong>IDP IELTS Practice Tests</strong>
+                  <span>IDP 官方练习题入口，可按需下载或复制文本后导入。</span>
+                  <div class="source-actions">
+                    <a class="button-link small primary" href="https://ielts.idp.com/about/practice-tests/new-practice-tests" target="_blank" rel="noopener">打开网页</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel reader" aria-labelledby="reader-title">
+          <div class="reader-toolbar">
+            <div>
+              <div class="panel-header-text" id="reader-title"><strong>阅读区</strong></div>
+              <div class="reader-stats">
+                <span>词数 <strong id="wordCount">0</strong></span>
+                <span>不同词 <strong id="uniqueCount">0</strong></span>
+                <span>已记录命中 <strong id="savedHitCount">0</strong></span>
+              </div>
+            </div>
+            <div class="reader-tools">
+              <button id="decreaseFontBtn" class="small" type="button">A-</button>
+              <button id="increaseFontBtn" class="small" type="button">A+</button>
+              <button id="resetFontBtn" class="small" type="button">重置字号</button>
+            </div>
+          </div>
+          <article id="articleView" class="article empty">
+            <div>还没有文章。粘贴或导入文本后点击“开始阅读”。</div>
+          </article>
+        </section>
+      </div>
+
+      <aside class="side">
+        <section class="panel lookup" aria-labelledby="lookup-title">
+          <div class="panel-header">
+            <h2 id="lookup-title">查词</h2>
+            <span>点击正文单词</span>
+          </div>
+          <div class="lookup-body">
+            <div class="selected-word">
+              <strong id="selectedWord">未选择</strong>
+              <span id="selectedMeta">点击阅读区中的英文单词查看释义</span>
+            </div>
+            <div class="translation">
+              <div id="translationMain" class="translation-main">释义会显示在这里</div>
+              <div id="translationSource" class="source">内置词库优先，未收录时尝试在线翻译。</div>
+            </div>
+            <div id="contextBox" class="context" hidden></div>
+            <div class="manual-row">
+              <input id="manualTranslation" type="text" placeholder="手动修正或补充中文释义" />
+              <button id="saveTranslationBtn" type="button">保存释义</button>
+            </div>
+            <div class="lookup-actions">
+              <button id="addVocabBtn" class="primary" type="button">加入生词本</button>
+              <button id="copyWordBtn" type="button">复制单词</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel vocab" aria-labelledby="vocab-title">
+          <div class="panel-header">
+            <h2 id="vocab-title">生词本</h2>
+            <span>本地自动保存</span>
+          </div>
+          <div class="vocab-body">
+            <div class="stat-row">
+              <div class="stat">
+                <strong id="totalUnique">0</strong>
+                <span>生词数</span>
+              </div>
+              <div class="stat">
+                <strong id="totalAdds">0</strong>
+                <span>记录次数</span>
+              </div>
+              <div class="stat">
+                <strong id="topCount">0</strong>
+                <span>最高频次</span>
+              </div>
+            </div>
+            <div class="vocab-filters">
+              <input id="vocabSearch" type="search" placeholder="搜索单词或释义" />
+              <select id="sortMode" aria-label="排序方式">
+                <option value="count">按次数</option>
+                <option value="recent">按最近</option>
+                <option value="word">按字母</option>
+              </select>
+            </div>
+            <div class="vocab-tools">
+              <button id="clearVocabBtn" class="warn small" type="button">清空生词本</button>
+              <span class="source">提示：查词后按 <span class="kbd">Enter</span> 可加入生词本。</span>
+            </div>
+            <div class="export-port">
+              <span class="source">导出接口</span>
+              <button id="exportCsvBtn" class="small" type="button">CSV</button>
+              <button id="exportJsonBtn" class="small" type="button">JSON</button>
+              <button id="exportTxtBtn" class="small" type="button">TXT</button>
+            </div>
+            <div id="vocabList" class="vocab-list"></div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE = {
+      article: "ielts-reader-article-v1",
+      vocab: "ielts-reader-vocab-v1",
+      translations: "ielts-reader-translations-v1",
+      cache: "ielts-reader-cache-v1",
+      fontSize: "ielts-reader-font-size-v1"
+    };
+    const PDFJS_SCRIPT = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    const PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const TESSERACT_SCRIPT = "https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js";
+    const TESSERACT_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/worker.min.js";
+    const TESSERACT_CORE = "https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core.wasm.js";
+    const TESSERACT_LANG = "https://tessdata.projectnaptha.com/4.0.0";
+
+    const SAMPLE_ARTICLE = `Urban Trees and Human Attention
+
+In many large cities, trees are often treated as decorative additions rather than essential infrastructure. Yet recent studies suggest that street trees can influence the way people use public space, the amount of heat absorbed by pavements, and even the concentration needed for demanding mental tasks. A shaded avenue is not simply more pleasant; it can change how long pedestrians remain outside and how confidently children travel to school.
+
+Researchers have also noticed that the benefits of trees are unevenly distributed. Wealthier districts usually have older trees, wider planting strips, and maintenance budgets that protect roots from construction damage. In contrast, poorer neighbourhoods may receive young trees that struggle to survive in compacted soil. This difference matters because the cooling effect of a mature canopy cannot be replaced quickly.
+
+For city planners, the central challenge is not whether trees are useful, but how to manage them as living systems. A tree planted in the wrong location may interfere with pipes or block visibility at junctions. However, careful species selection, regular monitoring, and community involvement can reduce these risks. When residents understand why a tree has been chosen and how it should be watered during dry periods, survival rates often improve.
+
+The argument for urban trees is therefore practical rather than sentimental. They lower temperatures, absorb pollutants, soften noise, and create routes that people are willing to walk. In a warming climate, such ordinary details may become a decisive part of public health.`;
+
+    const BASE_DICT = {
+      ability: "能力", able: "能够的", absorb: "吸收", absorbed: "被吸收的", academic: "学术的",
+      access: "进入；使用权", according: "根据", account: "账户；说明", achieve: "实现", achievement: "成就",
+      acquire: "获得", acquisition: "获得；习得", across: "穿过；遍及", activity: "活动", addition: "增加物；补充",
+      additional: "额外的", adequate: "足够的", affect: "影响", afford: "承担得起", agriculture: "农业",
+      aim: "目标；旨在", allow: "允许", alter: "改变", alternative: "替代方案", amount: "数量",
+      analysis: "分析", ancient: "古代的", appear: "出现；似乎", approach: "方法；接近", appropriate: "合适的",
+      area: "地区；面积", argument: "论点；争论", arise: "出现", artificial: "人工的", aspect: "方面",
+      assess: "评估", assume: "假设", attention: "注意力", attitude: "态度", available: "可获得的",
+      avenue: "大道", benefit: "益处", benefits: "益处", budget: "预算", budgets: "预算",
+      capacity: "能力；容量", capital: "资本；首都", category: "类别", cause: "导致；原因", challenge: "挑战",
+      change: "改变；变化", children: "儿童", choose: "选择", chosen: "被选择的", climate: "气候",
+      community: "社区", complex: "复杂的", compacted: "压实的", compare: "比较", concentration: "专注；浓度",
+      concept: "概念", conclude: "得出结论", condition: "条件；状况", confident: "自信的", confidently: "自信地",
+      consequence: "结果", construction: "建设；施工", contrast: "对比", contribute: "贡献；导致", control: "控制",
+      create: "创造", creative: "有创造力的", crucial: "关键的", culture: "文化", damage: "损害",
+      data: "数据", decisive: "决定性的", decorate: "装饰", decorative: "装饰性的", decrease: "减少",
+      demand: "要求；需求", demanding: "费力的；要求高的", demonstrate: "证明；展示", design: "设计",
+      detail: "细节", details: "细节", develop: "发展", development: "发展", difference: "差异",
+      different: "不同的", district: "区域", districts: "区域", distribute: "分配", distributed: "分布的",
+      document: "文件；记录", economy: "经济", effect: "影响；效果", effective: "有效的", efficient: "高效的",
+      element: "要素", energy: "能源", environment: "环境", essential: "必要的", evidence: "证据",
+      example: "例子", expand: "扩大", explanation: "解释", factor: "因素", feature: "特征",
+      finance: "金融；资助", focus: "焦点；集中", function: "功能", generation: "一代；产生",
+      global: "全球的", government: "政府", health: "健康", heat: "热量", history: "历史",
+      human: "人类的", identify: "识别", impact: "影响", improve: "改善", include: "包括",
+      increase: "增加", indicate: "表明", individual: "个人；个体的", influence: "影响", infrastructure: "基础设施",
+      involve: "涉及", involvement: "参与", issue: "问题", item: "项目", junction: "交叉路口",
+      knowledge: "知识", labour: "劳动", large: "大的", location: "位置", lower: "降低；较低的",
+      maintain: "维护", maintenance: "维护", manage: "管理", mature: "成熟的", mental: "心理的",
+      method: "方法", monitor: "监测", monitoring: "监测", noise: "噪音", ordinary: "普通的",
+      outside: "外面", pavement: "人行道；路面", pavements: "人行道；路面", pedestrian: "行人",
+      pedestrians: "行人", period: "时期", pipe: "管道", pipes: "管道", planner: "规划者",
+      planners: "规划者", pleasant: "令人愉快的", pollutant: "污染物", pollutants: "污染物",
+      poorer: "较贫穷的", population: "人口", practical: "实际的", prevent: "阻止", previous: "以前的",
+      primary: "主要的", process: "过程；处理", protect: "保护", public: "公共的", rates: "比率；速度",
+      recent: "最近的", reduce: "减少", regular: "定期的", relationship: "关系", remain: "保持；停留",
+      replace: "取代", replaced: "被取代的", research: "研究", researcher: "研究人员", researchers: "研究人员",
+      resident: "居民", residents: "居民", response: "回应", risk: "风险", risks: "风险", route: "路线",
+      routes: "路线", school: "学校", selection: "选择", sentimental: "感伤的", shade: "阴影；遮蔽",
+      shaded: "有阴影的", simply: "仅仅；简单地", social: "社会的", soil: "土壤", species: "物种",
+      specific: "具体的", strategy: "策略", street: "街道", struggle: "努力；挣扎", studies: "研究",
+      study: "研究", suggest: "表明；建议", survive: "存活", survival: "存活", system: "系统",
+      systems: "系统", task: "任务", tasks: "任务", technology: "技术", temperature: "温度",
+      temperatures: "温度", therefore: "因此", transport: "交通", tree: "树", trees: "树木",
+      unevenly: "不均衡地", urban: "城市的", useful: "有用的", visibility: "能见度", warming: "变暖",
+      water: "浇水；水", watered: "被浇水的", wealthier: "较富裕的", wider: "更宽的"
+    };
+
+    const els = {
+      articleInput: document.getElementById("articleInput"),
+      fileInput: document.getElementById("fileInput"),
+      extractReadingToggle: document.getElementById("extractReadingToggle"),
+      autoOcrToggle: document.getElementById("autoOcrToggle"),
+      ocrPageRange: document.getElementById("ocrPageRange"),
+      ocrCurrentPdfBtn: document.getElementById("ocrCurrentPdfBtn"),
+      extractReadingBtn: document.getElementById("extractReadingBtn"),
+      restorePdfTextBtn: document.getElementById("restorePdfTextBtn"),
+      extractStatus: document.getElementById("extractStatus"),
+      renderBtn: document.getElementById("renderBtn"),
+      loadSampleBtn: document.getElementById("loadSampleBtn"),
+      pasteSavedBtn: document.getElementById("pasteSavedBtn"),
+      clearArticleBtn: document.getElementById("clearArticleBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      exportCsvBtn: document.getElementById("exportCsvBtn"),
+      exportJsonBtn: document.getElementById("exportJsonBtn"),
+      exportTxtBtn: document.getElementById("exportTxtBtn"),
+      articleView: document.getElementById("articleView"),
+      wordCount: document.getElementById("wordCount"),
+      uniqueCount: document.getElementById("uniqueCount"),
+      savedHitCount: document.getElementById("savedHitCount"),
+      selectedWord: document.getElementById("selectedWord"),
+      selectedMeta: document.getElementById("selectedMeta"),
+      translationMain: document.getElementById("translationMain"),
+      translationSource: document.getElementById("translationSource"),
+      contextBox: document.getElementById("contextBox"),
+      manualTranslation: document.getElementById("manualTranslation"),
+      saveTranslationBtn: document.getElementById("saveTranslationBtn"),
+      addVocabBtn: document.getElementById("addVocabBtn"),
+      copyWordBtn: document.getElementById("copyWordBtn"),
+      totalUnique: document.getElementById("totalUnique"),
+      totalAdds: document.getElementById("totalAdds"),
+      topCount: document.getElementById("topCount"),
+      vocabSearch: document.getElementById("vocabSearch"),
+      sortMode: document.getElementById("sortMode"),
+      clearVocabBtn: document.getElementById("clearVocabBtn"),
+      vocabList: document.getElementById("vocabList"),
+      decreaseFontBtn: document.getElementById("decreaseFontBtn"),
+      increaseFontBtn: document.getElementById("increaseFontBtn"),
+      resetFontBtn: document.getElementById("resetFontBtn"),
+      toast: document.getElementById("toast")
+    };
+
+    let vocab = readJson(STORAGE.vocab, {});
+    let customTranslations = readJson(STORAGE.translations, {});
+    let translationCache = readJson(STORAGE.cache, {});
+    let selected = null;
+    let lookupToken = 0;
+    let currentArticle = "";
+    let currentFontSize = Number(localStorage.getItem(STORAGE.fontSize)) || 20;
+    let lastFullPdfText = "";
+    let lastPdfFile = null;
+    let ocrRunning = false;
+
+    function readJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function saveJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function loadScript(src, isReady = () => false) {
+      return new Promise((resolve, reject) => {
+        if (isReady()) {
+          resolve();
+          return;
+        }
+        const existing = document.querySelector(`script[src="${src}"]`);
+        if (existing) {
+          if (existing.dataset.loaded === "true" || isReady()) {
+            resolve();
+            return;
+          }
+          existing.addEventListener("load", resolve, { once: true });
+          existing.addEventListener("error", reject, { once: true });
+          return;
+        }
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        script.onload = () => {
+          script.dataset.loaded = "true";
+          resolve();
+        };
+        script.onerror = () => reject(new Error(`无法加载 ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadPdfJs() {
+      if (!window.pdfjsLib) await loadScript(PDFJS_SCRIPT, () => Boolean(window.pdfjsLib));
+      if (!window.pdfjsLib) throw new Error("PDF.js 未加载成功");
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+      return window.pdfjsLib;
+    }
+
+    async function loadTesseract() {
+      if (!window.Tesseract) await loadScript(TESSERACT_SCRIPT, () => Boolean(window.Tesseract));
+      if (!window.Tesseract) throw new Error("OCR 库未加载成功");
+      return window.Tesseract;
+    }
+
+    async function extractPdfText(file) {
+      const pdf = await openPdfDocument(file);
+      const pages = [];
+      for (let pageNo = 1; pageNo <= pdf.numPages; pageNo += 1) {
+        const page = await pdf.getPage(pageNo);
+        const content = await page.getTextContent();
+        const text = pageItemsToLines(content.items);
+        if (text) pages.push({ page: pageNo, text });
+      }
+      const fullText = pages
+        .map(page => `--- Page ${page.page} ---\n${page.text}`)
+        .join("\n\n");
+      return { fullText, pageCount: pdf.numPages, textPageCount: pages.length };
+    }
+
+    async function openPdfDocument(file) {
+      const pdfjs = await loadPdfJs();
+      const data = await file.arrayBuffer();
+      return pdfjs.getDocument({ data }).promise;
+    }
+
+    function parsePageRange(rangeText, pageCount) {
+      const value = String(rangeText || "").trim();
+      if (!value) return Array.from({ length: pageCount }, (_, index) => index + 1);
+      const pages = new Set();
+      for (const part of value.split(",")) {
+        const segment = part.trim();
+        if (!segment) continue;
+        const rangeMatch = /^(\d+)\s*[-–—]\s*(\d+)$/.exec(segment);
+        if (rangeMatch) {
+          const start = Number(rangeMatch[1]);
+          const end = Number(rangeMatch[2]);
+          const low = Math.min(start, end);
+          const high = Math.max(start, end);
+          for (let page = low; page <= high; page += 1) {
+            if (page >= 1 && page <= pageCount) pages.add(page);
+          }
+          continue;
+        }
+        if (/^\d+$/.test(segment)) {
+          const page = Number(segment);
+          if (page >= 1 && page <= pageCount) pages.add(page);
+        }
+      }
+      return [...pages].sort((a, b) => a - b);
+    }
+
+    function formatPageList(pages) {
+      if (!pages.length) return "";
+      const ranges = [];
+      let start = pages[0];
+      let prev = pages[0];
+      for (let i = 1; i <= pages.length; i += 1) {
+        const page = pages[i];
+        if (page === prev + 1) {
+          prev = page;
+          continue;
+        }
+        ranges.push(start === prev ? String(start) : `${start}-${prev}`);
+        start = page;
+        prev = page;
+      }
+      return ranges.join(", ");
+    }
+
+    async function ocrPdfFile(file, options = {}) {
+      if (ocrRunning) {
+        showToast("OCR 正在运行，请稍候。");
+        return null;
+      }
+      const pdf = await openPdfDocument(file);
+      const pages = parsePageRange(els.ocrPageRange.value, pdf.numPages);
+      if (!pages.length) throw new Error(`页码范围无效。PDF 共 ${pdf.numPages} 页。`);
+      if (!els.ocrPageRange.value.trim() && pages.length > 12 && !options.allowLarge) {
+        els.extractStatus.textContent = `PDF 共 ${pdf.numPages} 页。建议先输入 Reading 页码范围，例如 4-12，再点“OCR 当前 PDF”。`;
+        showToast("页数较多，先填写 OCR 页码范围会更快。");
+        return null;
+      }
+
+      ocrRunning = true;
+      els.ocrCurrentPdfBtn.disabled = true;
+      els.fileInput.disabled = true;
+      els.extractStatus.textContent = `正在加载 OCR，页码 ${formatPageList(pages)}...`;
+
+      try {
+        const Tesseract = await loadTesseract();
+        const chunks = [];
+        for (let i = 0; i < pages.length; i += 1) {
+          const pageNo = pages[i];
+          const page = await pdf.getPage(pageNo);
+          const viewport = page.getViewport({ scale: 2 });
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d", { alpha: false });
+          canvas.width = Math.ceil(viewport.width);
+          canvas.height = Math.ceil(viewport.height);
+          await page.render({ canvasContext: context, viewport }).promise;
+
+          els.extractStatus.textContent = `OCR 第 ${i + 1}/${pages.length} 页（PDF 第 ${pageNo} 页）...`;
+          const result = await Tesseract.recognize(canvas, "eng", {
+            workerPath: TESSERACT_WORKER,
+            corePath: TESSERACT_CORE,
+            langPath: TESSERACT_LANG,
+            logger: message => {
+              if (!message || message.status !== "recognizing text") return;
+              const percent = Math.round(Number(message.progress || 0) * 100);
+              els.extractStatus.textContent = `OCR 第 ${i + 1}/${pages.length} 页（PDF 第 ${pageNo} 页）${percent}%`;
+            }
+          });
+          const text = result && result.data && result.data.text ? cleanPdfText(result.data.text) : "";
+          if (text) chunks.push(`--- Page ${pageNo} OCR ---\n${text}`);
+        }
+
+        const ocrText = cleanPdfText(chunks.join("\n\n"));
+        if (!ocrText) throw new Error("OCR 没有识别出文本，请确认页码范围或图片清晰度。");
+        lastFullPdfText = ocrText;
+        els.restorePdfTextBtn.hidden = false;
+        els.articleInput.value = ocrText;
+        renderArticle(ocrText);
+
+        if (els.extractReadingToggle.checked) {
+          const extraction = extractReadingSections(ocrText);
+          if (useExtractionResult(extraction, "OCR 文本")) {
+            return extraction.text;
+          }
+        }
+
+        els.extractStatus.textContent = `OCR 完成：${pages.length} 页，已显示完整 OCR 文本。`;
+        return ocrText;
+      } finally {
+        ocrRunning = false;
+        els.ocrCurrentPdfBtn.disabled = false;
+        els.fileInput.disabled = false;
+      }
+    }
+
+    function pageItemsToLines(items) {
+      const rows = [];
+      for (const item of items) {
+        const text = String(item.str || "").trim();
+        if (!text) continue;
+        const transform = item.transform || [1, 0, 0, 1, 0, 0];
+        const x = Number(transform[4] || 0);
+        const y = Number(transform[5] || 0);
+        let row = rows.find(existing => Math.abs(existing.y - y) <= 3);
+        if (!row) {
+          row = { y, items: [] };
+          rows.push(row);
+        }
+        row.items.push({ x, text });
+      }
+      return rows
+        .sort((a, b) => b.y - a.y)
+        .map(row => row.items
+          .sort((a, b) => a.x - b.x)
+          .map(item => item.text)
+          .join(" ")
+          .replace(/\s+/g, " ")
+          .trim())
+        .filter(Boolean)
+        .join("\n")
+        .replace(/-\n(?=[a-z])/g, "")
+        .trim();
+    }
+
+    function cleanPdfText(text) {
+      return String(text || "")
+        .replace(/\r\n?/g, "\n")
+        .replace(/[ \t]+\n/g, "\n")
+        .replace(/\n[ \t]+/g, "\n")
+        .replace(/\n{4,}/g, "\n\n\n")
+        .trim();
+    }
+
+    function findReadingStartCandidates(text) {
+      const patterns = [
+        { type: "heading", base: 45, re: /(?:^|\n)\s*(?:Test\s+\d+\s+)?(?:Academic\s+|General\s+Training\s+)?Reading\b(?:\s+Test)?/gi },
+        { type: "passage", base: 90, re: /(?:^|\n)\s*Reading\s+Passage\s+1\b/gi },
+        { type: "section", base: 70, re: /(?:^|\n)\s*Section\s+1\b/gi },
+        { type: "questions", base: 55, re: /(?:^|\n)\s*Questions\s+1\s*[-–—]\s*(?:13|14)\b/gi }
+      ];
+      const candidates = [];
+      for (const pattern of patterns) {
+        pattern.re.lastIndex = 0;
+        let match;
+        while ((match = pattern.re.exec(text)) !== null) {
+          const index = match.index + (match[0].startsWith("\n") ? 1 : 0);
+          const before = text.slice(Math.max(0, index - 500), index).toLowerCase();
+          const ahead = text.slice(index, index + 2600).toLowerCase();
+          let score = pattern.base;
+          if (/questions\s+1\s*[-–—]\s*(13|14)/i.test(ahead)) score += 28;
+          if (/questions\s+14\s*[-–—]\s*26/i.test(ahead)) score += 18;
+          if (/questions\s+27\s*[-–—]\s*40/i.test(ahead)) score += 22;
+          if (/reading\s+passage\s+2/i.test(ahead)) score += 18;
+          if (/reading\s+passage\s+3/i.test(ahead)) score += 18;
+          if (/you\s+should\s+spend\s+about\s+20\s+minutes/i.test(ahead)) score += 14;
+          if (/contents|table\s+of\s+contents/i.test(before + ahead.slice(0, 600))) score -= 70;
+          if (!/questions\s+\d+/i.test(ahead)) score -= 35;
+          if ((ahead.match(/\b\w+\b/g) || []).length < 90) score -= 25;
+          candidates.push({ index, score, type: pattern.type });
+        }
+      }
+      return candidates
+        .filter(candidate => candidate.score >= 55)
+        .sort((a, b) => a.index - b.index || b.score - a.score);
+    }
+
+    function findReadingEnd(text, start, nextStart) {
+      const minOffset = 1800;
+      const patterns = [
+        /(?:^|\n)\s*(?:Test\s+\d+\s+)?Writing\b/i,
+        /(?:^|\n)\s*Writing\s+Task\s+1\b/i,
+        /(?:^|\n)\s*(?:Test\s+\d+\s+)?Listening\b/i,
+        /(?:^|\n)\s*Speaking\b/i,
+        /(?:^|\n)\s*(?:Reading\s+)?Answer(?:s|\s+Key)\b/i,
+        /(?:^|\n)\s*Audioscripts?\b/i
+      ];
+      const endCandidates = [];
+      for (const pattern of patterns) {
+        const tail = text.slice(start + minOffset);
+        const match = pattern.exec(tail);
+        if (match) endCandidates.push(start + minOffset + match.index);
+      }
+      if (nextStart && nextStart - start > 2500) endCandidates.push(nextStart);
+      return endCandidates.length ? Math.min(...endCandidates) : text.length;
+    }
+
+    function tidyReadingSection(text, number) {
+      const body = cleanPdfText(text)
+        .replace(/^--- Page (\d+) ---$/gm, "[Page $1]")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+      return number ? `Reading Section ${number}\n\n${body}` : body;
+    }
+
+    function extractReadingSections(text) {
+      const cleaned = cleanPdfText(text);
+      const candidates = findReadingStartCandidates(cleaned);
+      const sections = [];
+      for (let i = 0; i < candidates.length; i += 1) {
+        const candidate = candidates[i];
+        if (sections.some(section => candidate.index >= section.start && candidate.index < section.end)) continue;
+        const next = candidates.find(other => other.index > candidate.index + 2500);
+        const end = findReadingEnd(cleaned, candidate.index, next && next.index);
+        const raw = cleaned.slice(candidate.index, end);
+        const wordCount = (raw.match(/[A-Za-z]+/g) || []).length;
+        if (wordCount < 220) continue;
+        sections.push({
+          start: candidate.index,
+          end,
+          score: candidate.score,
+          type: candidate.type,
+          wordCount,
+          text: tidyReadingSection(raw, sections.length + 1)
+        });
+      }
+
+      if (!sections.length) {
+        const fallback = fallbackReadingRange(cleaned);
+        if (fallback) sections.push(fallback);
+      }
+
+      const extractedText = sections.map(section => section.text).join("\n\n\n");
+      return {
+        text: extractedText,
+        sections,
+        confidence: sections.length ? Math.min(100, Math.max(...sections.map(section => section.score))) : 0
+      };
+    }
+
+    function fallbackReadingRange(text) {
+      const startMatch = /(?:^|\n)\s*(?:Academic\s+|General\s+Training\s+)?Reading\b/i.exec(text);
+      if (!startMatch) return null;
+      const start = startMatch.index + (startMatch[0].startsWith("\n") ? 1 : 0);
+      const end = findReadingEnd(text, start, null);
+      const raw = text.slice(start, end);
+      const wordCount = (raw.match(/[A-Za-z]+/g) || []).length;
+      if (wordCount < 220) return null;
+      return {
+        start,
+        end,
+        score: 48,
+        type: "fallback",
+        wordCount,
+        text: tidyReadingSection(raw, 1)
+      };
+    }
+
+    function useExtractionResult(result, sourceLabel) {
+      if (!result.sections.length) {
+        els.extractStatus.textContent = "没有稳定识别到 Reading 边界，已保留完整文本。可手动删除非阅读部分。";
+        return false;
+      }
+      els.articleInput.value = result.text;
+      renderArticle(result.text);
+      const words = result.sections.reduce((sum, section) => sum + section.wordCount, 0);
+      els.extractStatus.textContent = `${sourceLabel}：已提取 ${result.sections.length} 个 Reading 部分，约 ${words} 个英文词。`;
+      return true;
+    }
+
+    function readTextFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(reader.error || new Error("文件读取失败"));
+        reader.readAsText(file);
+      });
+    }
+
+    function normalizeWord(word) {
+      return word
+        .toLowerCase()
+        .replace(/[’]/g, "'")
+        .replace(/^'+|'+$/g, "")
+        .replace(/'s$/, "");
+    }
+
+    function dictionaryCandidates(word) {
+      const key = normalizeWord(word);
+      const candidates = [key];
+      if (key.endsWith("ies") && key.length > 4) candidates.push(key.slice(0, -3) + "y");
+      if (key.endsWith("ing") && key.length > 5) candidates.push(key.slice(0, -3), key.slice(0, -3) + "e");
+      if (key.endsWith("ed") && key.length > 4) candidates.push(key.slice(0, -2), key.slice(0, -1));
+      if (key.endsWith("es") && key.length > 4) candidates.push(key.slice(0, -2));
+      if (key.endsWith("s") && key.length > 3) candidates.push(key.slice(0, -1));
+      return [...new Set(candidates)];
+    }
+
+    function getKnownTranslation(word) {
+      for (const candidate of dictionaryCandidates(word)) {
+        if (customTranslations[candidate]) return { text: customTranslations[candidate], source: "自定义释义" };
+        if (BASE_DICT[candidate]) return { text: BASE_DICT[candidate], source: "内置词库" };
+        if (translationCache[candidate]) return { text: translationCache[candidate], source: "在线翻译缓存" };
+      }
+      return null;
+    }
+
+    async function lookupTranslation(word) {
+      const known = getKnownTranslation(word);
+      if (known) return known;
+
+      const key = normalizeWord(word);
+      const endpoint = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(key)}&langpair=en|zh-CN`;
+      try {
+        const response = await fetch(endpoint);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const translated = data && data.responseData && String(data.responseData.translatedText || "").trim();
+        if (translated && translated.toLowerCase() !== key) {
+          translationCache[key] = translated;
+          saveJson(STORAGE.cache, translationCache);
+          return { text: translated, source: "在线翻译" };
+        }
+      } catch {
+        return { text: "在线翻译暂不可用，可在下方手动补充释义。", source: "未收录", missing: true };
+      }
+      return { text: "未找到可靠中文释义，可在下方手动补充。", source: "未收录", missing: true };
+    }
+
+    function renderArticle(text) {
+      currentArticle = text.trim();
+      localStorage.setItem(STORAGE.article, currentArticle);
+      els.articleView.innerHTML = "";
+
+      if (!currentArticle) {
+        els.articleView.className = "article empty";
+        els.articleView.textContent = "还没有文章。粘贴或导入文本后点击“开始阅读”。";
+        updateReaderStats([]);
+        return;
+      }
+
+      els.articleView.className = "article";
+      els.articleView.style.fontSize = `${currentFontSize}px`;
+      const regex = /[A-Za-z]+(?:[-'][A-Za-z]+)*|\d+(?:[.,]\d+)*|\s+|[^\sA-Za-z\d]+/g;
+      const words = [];
+      let match;
+
+      while ((match = regex.exec(currentArticle)) !== null) {
+        const token = match[0];
+        if (/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/.test(token)) {
+          const key = normalizeWord(token);
+          words.push(key);
+          const span = document.createElement("span");
+          span.className = "word";
+          if (vocab[key]) span.classList.add("saved");
+          span.textContent = token;
+          span.dataset.word = token;
+          span.dataset.key = key;
+          span.dataset.start = String(match.index);
+          span.dataset.end = String(match.index + token.length);
+          span.title = "点击查词";
+          span.addEventListener("click", () => selectWord(span));
+          els.articleView.appendChild(span);
+        } else {
+          els.articleView.appendChild(document.createTextNode(token));
+        }
+      }
+
+      updateReaderStats(words);
+    }
+
+    function updateReaderStats(words) {
+      const unique = new Set(words);
+      const savedHits = words.filter(word => vocab[word]).length;
+      els.wordCount.textContent = String(words.length);
+      els.uniqueCount.textContent = String(unique.size);
+      els.savedHitCount.textContent = String(savedHits);
+    }
+
+    function selectWord(span) {
+      document.querySelectorAll(".word.selected").forEach(node => node.classList.remove("selected"));
+      span.classList.add("selected");
+
+      const raw = span.dataset.word;
+      const key = span.dataset.key;
+      selected = {
+        raw,
+        key,
+        start: Number(span.dataset.start),
+        end: Number(span.dataset.end),
+        context: extractContext(Number(span.dataset.start), Number(span.dataset.end))
+      };
+
+      els.selectedWord.textContent = raw;
+      els.selectedMeta.textContent = vocab[key] ? `已在生词本，记录 ${vocab[key].count} 次` : "未加入生词本";
+      els.translationMain.textContent = "正在查找释义...";
+      els.translationSource.textContent = "请稍候";
+      els.manualTranslation.value = "";
+      els.contextBox.hidden = !selected.context;
+      els.contextBox.textContent = selected.context;
+
+      const token = ++lookupToken;
+      lookupTranslation(raw).then(result => {
+        if (token !== lookupToken || !selected || selected.key !== key) return;
+        selected.translation = result.text;
+        selected.translationSource = result.source;
+        els.translationMain.textContent = result.text;
+        els.translationSource.textContent = result.source;
+        if (result.missing) els.manualTranslation.focus();
+      });
+    }
+
+    function extractContext(start, end) {
+      if (!currentArticle) return "";
+      const left = currentArticle.lastIndexOf(".", start);
+      const leftQuestion = currentArticle.lastIndexOf("?", start);
+      const leftBang = currentArticle.lastIndexOf("!", start);
+      const sentenceStart = Math.max(left, leftQuestion, leftBang, currentArticle.lastIndexOf("\n", start));
+      const rightStops = [".", "?", "!", "\n"]
+        .map(mark => currentArticle.indexOf(mark, end))
+        .filter(index => index >= 0);
+      const sentenceEnd = rightStops.length ? Math.min(...rightStops) + 1 : Math.min(currentArticle.length, end + 180);
+      return currentArticle.slice(Math.max(0, sentenceStart + 1), sentenceEnd).trim();
+    }
+
+    function addSelectedToVocab() {
+      if (!selected) {
+        showToast("请先点击正文中的一个单词。");
+        return;
+      }
+
+      const manual = els.manualTranslation.value.trim();
+      if (manual) {
+        customTranslations[selected.key] = manual;
+        saveJson(STORAGE.translations, customTranslations);
+        selected.translation = manual;
+        selected.translationSource = "自定义释义";
+      }
+
+      const translation = selected.translation || getKnownTranslation(selected.raw)?.text || "未补充释义";
+      const now = new Date().toISOString();
+      const existing = vocab[selected.key];
+      const examples = existing && Array.isArray(existing.examples) ? existing.examples : [];
+      if (selected.context && !examples.includes(selected.context)) {
+        examples.unshift(selected.context);
+      }
+
+      vocab[selected.key] = {
+        word: selected.key,
+        display: selected.raw,
+        translation,
+        count: existing ? existing.count + 1 : 1,
+        firstSeen: existing ? existing.firstSeen : now,
+        lastSeen: now,
+        examples: examples.slice(0, 3)
+      };
+
+      saveJson(STORAGE.vocab, vocab);
+      renderVocab();
+      renderArticle(currentArticle);
+      els.selectedWord.textContent = selected.raw;
+      els.selectedMeta.textContent = `已在生词本，记录 ${vocab[selected.key].count} 次`;
+      showToast(`已记录 ${selected.key}，累计 ${vocab[selected.key].count} 次。`);
+    }
+
+    function renderVocab() {
+      const items = Object.values(vocab);
+      const totalAdds = items.reduce((sum, item) => sum + Number(item.count || 0), 0);
+      const top = items.reduce((max, item) => Math.max(max, Number(item.count || 0)), 0);
+      els.totalUnique.textContent = String(items.length);
+      els.totalAdds.textContent = String(totalAdds);
+      els.topCount.textContent = String(top);
+
+      const query = els.vocabSearch.value.trim().toLowerCase();
+      const filtered = items.filter(item => {
+        const text = `${item.word} ${item.display || ""} ${item.translation || ""}`.toLowerCase();
+        return text.includes(query);
+      });
+
+      filtered.sort((a, b) => {
+        if (els.sortMode.value === "word") return a.word.localeCompare(b.word);
+        if (els.sortMode.value === "recent") return String(b.lastSeen || "").localeCompare(String(a.lastSeen || ""));
+        return Number(b.count || 0) - Number(a.count || 0) || a.word.localeCompare(b.word);
+      });
+
+      els.vocabList.innerHTML = "";
+      if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = items.length ? "没有匹配的生词。" : "生词本为空。查词后点击“加入生词本”。";
+        els.vocabList.appendChild(empty);
+        return;
+      }
+
+      const maxCount = Math.max(1, ...filtered.map(item => Number(item.count || 0)));
+      for (const item of filtered) {
+        const node = document.createElement("div");
+        node.className = "vocab-item";
+
+        const main = document.createElement("div");
+        main.className = "vocab-main";
+        const word = document.createElement("div");
+        word.className = "vocab-word";
+        const strong = document.createElement("strong");
+        strong.textContent = item.word;
+        const translation = document.createElement("span");
+        translation.textContent = item.translation || "未补充释义";
+        word.append(strong, translation);
+
+        const count = document.createElement("div");
+        count.className = "count-pill";
+        count.textContent = String(item.count || 0);
+        main.append(word, count);
+
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        const fill = document.createElement("i");
+        fill.style.setProperty("--w", `${Math.max(5, ((item.count || 0) / maxCount) * 100)}%`);
+        bar.appendChild(fill);
+
+        const actions = document.createElement("div");
+        actions.className = "vocab-actions";
+        const plus = makeButton("+1", "small", () => bumpWord(item.word, 1));
+        const minus = makeButton("-1", "small", () => bumpWord(item.word, -1));
+        const copy = makeButton("复制", "small", () => copyText(item.word));
+        const remove = makeButton("删除", "small warn", () => removeWord(item.word));
+        actions.append(plus, minus, copy, remove);
+
+        node.append(main, bar, actions);
+        els.vocabList.appendChild(node);
+      }
+    }
+
+    function makeButton(text, className, handler) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = className;
+      button.textContent = text;
+      button.addEventListener("click", handler);
+      return button;
+    }
+
+    function bumpWord(word, delta) {
+      if (!vocab[word]) return;
+      vocab[word].count = Math.max(0, Number(vocab[word].count || 0) + delta);
+      vocab[word].lastSeen = new Date().toISOString();
+      if (vocab[word].count === 0) delete vocab[word];
+      saveJson(STORAGE.vocab, vocab);
+      renderVocab();
+      renderArticle(currentArticle);
+    }
+
+    function removeWord(word) {
+      if (!confirm(`删除 ${word}？`)) return;
+      delete vocab[word];
+      saveJson(STORAGE.vocab, vocab);
+      renderVocab();
+      renderArticle(currentArticle);
+      showToast(`已删除 ${word}`);
+    }
+
+    function saveManualTranslation() {
+      if (!selected) {
+        showToast("请先选择一个单词。");
+        return;
+      }
+      const value = els.manualTranslation.value.trim();
+      if (!value) {
+        showToast("请输入中文释义。");
+        return;
+      }
+      customTranslations[selected.key] = value;
+      saveJson(STORAGE.translations, customTranslations);
+      selected.translation = value;
+      selected.translationSource = "自定义释义";
+      els.translationMain.textContent = value;
+      els.translationSource.textContent = "自定义释义";
+      if (vocab[selected.key]) {
+        vocab[selected.key].translation = value;
+        saveJson(STORAGE.vocab, vocab);
+        renderVocab();
+      }
+      showToast(`已保存 ${selected.key} 的释义。`);
+    }
+
+    function exportCsv() {
+      const items = getVocabExportItems();
+      if (!items.length) {
+        showToast("生词本为空，暂无可导出内容。");
+        return;
+      }
+      const rows = [
+        ["word", "translation", "count", "first_seen", "last_seen", "example"],
+        ...items.map(item => [
+          item.word,
+          item.translation || "",
+          item.count || 0,
+          item.firstSeen || "",
+          item.lastSeen || "",
+          Array.isArray(item.examples) && item.examples.length ? item.examples[0] : ""
+        ])
+      ];
+      const csv = rows.map(row => row.map(csvCell).join(",")).join("\n");
+      downloadFile(csv, "csv", "text/csv;charset=utf-8");
+      showToast("已导出生词本 CSV。");
+    }
+
+    function exportJson() {
+      const items = getVocabExportItems();
+      if (!items.length) {
+        showToast("生词本为空，暂无可导出内容。");
+        return;
+      }
+      const payload = {
+        app: "IELTS 阅读查词本",
+        exportedAt: new Date().toISOString(),
+        totalWords: items.length,
+        totalRecords: items.reduce((sum, item) => sum + Number(item.count || 0), 0),
+        words: items
+      };
+      downloadFile(JSON.stringify(payload, null, 2), "json", "application/json;charset=utf-8");
+      showToast("已导出生词本 JSON。");
+    }
+
+    function exportTxt() {
+      const items = getVocabExportItems();
+      if (!items.length) {
+        showToast("生词本为空，暂无可导出内容。");
+        return;
+      }
+      const lines = items.map(item => {
+        const translation = item.translation || "未补充释义";
+        return `${item.word}\t${translation}\t${item.count || 0}`;
+      });
+      downloadFile(lines.join("\n"), "txt", "text/plain;charset=utf-8");
+      showToast("已导出生词本 TXT。");
+    }
+
+    function getVocabExportItems() {
+      return Object.values(vocab)
+        .map(item => ({
+          word: item.word,
+          display: item.display || item.word,
+          translation: item.translation || "",
+          count: Number(item.count || 0),
+          firstSeen: item.firstSeen || "",
+          lastSeen: item.lastSeen || "",
+          examples: Array.isArray(item.examples) ? item.examples : []
+        }))
+        .sort((a, b) => b.count - a.count || a.word.localeCompare(b.word));
+    }
+
+    function downloadFile(content, extension, mimeType) {
+      const blob = new Blob(["\ufeff" + content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `ielts-vocab-${new Date().toISOString().slice(0, 10)}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function csvCell(value) {
+      const text = String(value ?? "");
+      return `"${text.replace(/"/g, '""')}"`;
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(`已复制 ${text}`);
+      } catch {
+        showToast("复制失败，浏览器可能限制了剪贴板权限。");
+      }
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => els.toast.classList.remove("show"), 2100);
+    }
+
+    function applyFontSize(size) {
+      currentFontSize = Math.max(15, Math.min(26, size));
+      localStorage.setItem(STORAGE.fontSize, String(currentFontSize));
+      els.articleView.style.fontSize = `${currentFontSize}px`;
+    }
+
+    els.renderBtn.addEventListener("click", () => renderArticle(els.articleInput.value));
+    els.loadSampleBtn.addEventListener("click", () => {
+      els.articleInput.value = SAMPLE_ARTICLE;
+      renderArticle(SAMPLE_ARTICLE);
+      showToast("已载入示例文章。");
+    });
+    els.pasteSavedBtn.addEventListener("click", () => {
+      const saved = localStorage.getItem(STORAGE.article) || "";
+      els.articleInput.value = saved;
+      renderArticle(saved);
+      showToast(saved ? "已恢复上次文章。" : "没有找到上次文章。");
+    });
+    els.clearArticleBtn.addEventListener("click", () => {
+      if (!currentArticle && !els.articleInput.value) return;
+      if (!confirm("清空当前文章？生词本不会被删除。")) return;
+      els.articleInput.value = "";
+      renderArticle("");
+      showToast("文章已清空。");
+    });
+    els.fileInput.addEventListener("change", async event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+        showToast(isPdf ? "正在解析 PDF，请稍候..." : "正在读取文本文件...");
+        let text = "";
+        if (isPdf) {
+          lastPdfFile = file;
+          els.ocrCurrentPdfBtn.hidden = false;
+          const pdfResult = await extractPdfText(file);
+          lastFullPdfText = pdfResult.fullText;
+          els.restorePdfTextBtn.hidden = false;
+          if (!lastFullPdfText.trim()) {
+            els.restorePdfTextBtn.hidden = true;
+            els.extractStatus.textContent = `没有从 PDF 中提取到文字。这个文件可能是扫描版，请填写 Reading 页码范围后点“OCR 当前 PDF”。`;
+            if (els.autoOcrToggle.checked) {
+              const ocrText = await ocrPdfFile(file, { allowLarge: false });
+              showToast(ocrText ? "OCR 完成。" : "需要填写 OCR 页码范围后再运行。");
+              return;
+            }
+            showToast("PDF 没有文字层，请使用 OCR。");
+            return;
+          }
+          if (els.extractReadingToggle.checked) {
+            const extraction = extractReadingSections(lastFullPdfText);
+            if (useExtractionResult(extraction, file.name)) {
+              showToast(`已从 ${file.name} 提取 Reading 部分`);
+              return;
+            }
+          }
+          text = lastFullPdfText;
+          els.extractStatus.textContent = `已读取 ${pdfResult.textPageCount}/${pdfResult.pageCount} 页文字，未自动裁剪。`;
+        } else {
+          lastPdfFile = null;
+          els.ocrCurrentPdfBtn.hidden = true;
+          text = await readTextFile(file);
+          els.extractStatus.textContent = "已读取文本文件；如包含整套试题，可点击“从当前文本提取 Reading”。";
+        }
+        if (!text.trim()) throw new Error("没有从文件中提取到文本");
+        els.articleInput.value = text;
+        renderArticle(text);
+        showToast(`已导入 ${file.name}`);
+      } catch (error) {
+        showToast(`导入失败：${error.message || "文件无法读取"}`);
+      } finally {
+        event.target.value = "";
+      }
+    });
+    els.ocrCurrentPdfBtn.addEventListener("click", async () => {
+      if (!lastPdfFile) {
+        showToast("请先导入一个 PDF。");
+        return;
+      }
+      const allowLarge = Boolean(els.ocrPageRange.value.trim()) || confirm("未填写页码范围，OCR 整个 PDF 可能需要很久。继续吗？");
+      if (!allowLarge) return;
+      try {
+        const result = await ocrPdfFile(lastPdfFile, { allowLarge });
+        if (result) showToast("OCR 完成。");
+      } catch (error) {
+        els.extractStatus.textContent = `OCR 失败：${error.message || "无法识别"}`;
+        showToast(`OCR 失败：${error.message || "无法识别"}`);
+      }
+    });
+    els.extractReadingBtn.addEventListener("click", () => {
+      const text = els.articleInput.value || currentArticle;
+      if (!text.trim()) {
+        showToast("当前没有可提取的文本。");
+        return;
+      }
+      const extraction = extractReadingSections(text);
+      if (useExtractionResult(extraction, "当前文本")) {
+        showToast("已提取 Reading 部分。");
+      } else {
+        showToast("未识别到清晰的 Reading 边界。");
+      }
+    });
+    els.restorePdfTextBtn.addEventListener("click", () => {
+      if (!lastFullPdfText.trim()) {
+        showToast("没有完整 PDF 文本可恢复。");
+        return;
+      }
+      els.articleInput.value = lastFullPdfText;
+      renderArticle(lastFullPdfText);
+      els.extractStatus.textContent = "已切换为完整 PDF 文本。";
+      showToast("已恢复完整 PDF 文本。");
+    });
+    els.addVocabBtn.addEventListener("click", addSelectedToVocab);
+    els.copyWordBtn.addEventListener("click", () => selected ? copyText(selected.key) : showToast("请先选择一个单词。"));
+    els.saveTranslationBtn.addEventListener("click", saveManualTranslation);
+    els.exportBtn.addEventListener("click", exportCsv);
+    els.exportCsvBtn.addEventListener("click", exportCsv);
+    els.exportJsonBtn.addEventListener("click", exportJson);
+    els.exportTxtBtn.addEventListener("click", exportTxt);
+    els.vocabSearch.addEventListener("input", renderVocab);
+    els.sortMode.addEventListener("change", renderVocab);
+    els.clearVocabBtn.addEventListener("click", () => {
+      if (!Object.keys(vocab).length) return;
+      if (!confirm("确认清空全部生词记录？")) return;
+      vocab = {};
+      saveJson(STORAGE.vocab, vocab);
+      renderVocab();
+      renderArticle(currentArticle);
+      showToast("生词本已清空。");
+    });
+    els.decreaseFontBtn.addEventListener("click", () => applyFontSize(currentFontSize - 1));
+    els.increaseFontBtn.addEventListener("click", () => applyFontSize(currentFontSize + 1));
+    els.resetFontBtn.addEventListener("click", () => applyFontSize(20));
+    document.addEventListener("keydown", event => {
+      const typing = event.target && event.target.closest && event.target.closest("input, textarea, select, button");
+      if (event.key === "Enter" && selected && !typing) {
+        event.preventDefault();
+        addSelectedToVocab();
+      }
+    });
+
+    applyFontSize(currentFontSize);
+    const savedArticle = localStorage.getItem(STORAGE.article) || "";
+    if (savedArticle) {
+      els.articleInput.value = savedArticle;
+      renderArticle(savedArticle);
+    } else {
+      renderArticle("");
+    }
+    renderVocab();
+  </script>
+</body>
+</html>
