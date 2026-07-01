@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IELTS 阅读查词本</title>
-  <meta name="description" content="A browser-based IELTS reading tool with PDF/TXT import, scanned PDF OCR, click-to-translate words, vocabulary tracking, and CSV/JSON/TXT export." />
-  <meta property="og:title" content="IELTS 阅读查词本" />
-  <meta property="og:description" content="Import IELTS reading passages, click words for Chinese translations, save vocabulary, and export your word list." />
+  <title>科研论文阅读器</title>
+  <meta name="description" content="A browser-based research paper reader with PDF/TXT import, scanned PDF OCR, paper section extraction, click-to-translate words, vocabulary tracking, notes, and export." />
+  <meta property="og:title" content="科研论文阅读器" />
+  <meta property="og:description" content="Import research papers, extract abstracts and sections, click words for Chinese translations, save vocabulary, and export your word list." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://jiahehu2000-lgtm.github.io/English-reader/" />
   <link rel="canonical" href="https://jiahehu2000-lgtm.github.io/English-reader/" />
@@ -370,6 +370,90 @@
       gap: 13px;
     }
 
+    .paper-body {
+      padding: 14px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .paper-title {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fbfcfb;
+      display: grid;
+      gap: 4px;
+    }
+
+    .paper-title strong {
+      font-size: 15px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .paper-title span,
+    .paper-abstract,
+    .outline-list,
+    .term-list {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .paper-abstract {
+      max-height: 132px;
+      overflow: auto;
+      padding: 10px 12px;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 7px 7px 0;
+      background: #f5faf7;
+    }
+
+    .outline-list {
+      display: grid;
+      gap: 6px;
+      max-height: 210px;
+      overflow: auto;
+    }
+
+    .outline-item {
+      width: 100%;
+      min-height: 30px;
+      padding: 5px 8px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .term-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 150px;
+      overflow: auto;
+    }
+
+    .term-chip {
+      min-height: 28px;
+      padding: 4px 8px;
+      border: 1px solid #d8e8df;
+      border-radius: 999px;
+      background: #f5faf7;
+      color: var(--accent);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .note-box {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
     .selected-word {
       min-height: 64px;
       display: grid;
@@ -708,8 +792,8 @@
   <main class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>IELTS 阅读查词本</h1>
-        <p>导入阅读文章，点击英文单词查中文释义，再按需加入生词本。</p>
+        <h1>科研论文阅读器</h1>
+        <p>导入论文 PDF/TXT，自动整理摘要和章节，点击英文单词查中文释义并记录生词。</p>
       </div>
       <div class="top-actions">
         <a class="button-link primary" href="https://github.com/jiahehu2000-lgtm/English-reader" target="_blank" rel="noopener">★ Star on GitHub</a>
@@ -723,11 +807,11 @@
       <div>
         <section class="panel importer" aria-labelledby="import-title">
           <div class="panel-header">
-            <h2 id="import-title">导入文章</h2>
-            <span>支持粘贴文本、TXT 或 PDF</span>
+            <h2 id="import-title">导入论文</h2>
+            <span>支持论文 PDF、扫描版 OCR、TXT 或粘贴文本</span>
           </div>
           <div class="import-body">
-            <textarea id="articleInput" placeholder="把雅思阅读文章粘贴到这里，或点击下方导入 TXT/PDF 文件。"></textarea>
+            <textarea id="articleInput" placeholder="把科研论文正文、摘要或英文阅读材料粘贴到这里，或点击下方导入 TXT/PDF 文件。"></textarea>
             <div class="import-actions">
               <button id="renderBtn" class="primary" type="button">开始阅读</button>
               <label class="file-button">
@@ -737,9 +821,18 @@
               <button id="pasteSavedBtn" type="button">恢复上次文章</button>
             </div>
             <div class="extract-controls">
+              <select id="documentMode" aria-label="文档类型">
+                <option value="paper">科研论文</option>
+                <option value="ielts">雅思阅读</option>
+                <option value="full">完整文本</option>
+              </select>
               <label class="check-row">
                 <input id="extractReadingToggle" type="checkbox" checked />
-                <span>PDF 导入时自动提取 Reading 部分</span>
+                <span>PDF 导入时自动提取正文</span>
+              </label>
+              <label class="check-row">
+                <input id="skipReferencesToggle" type="checkbox" checked />
+                <span>论文模式跳过 References</span>
               </label>
               <label class="check-row">
                 <input id="autoOcrToggle" type="checkbox" />
@@ -747,43 +840,41 @@
               </label>
               <input id="ocrPageRange" type="text" placeholder="OCR 页码，如 4-12" aria-label="OCR 页码范围" />
               <button id="ocrCurrentPdfBtn" class="small" type="button" hidden>OCR 当前 PDF</button>
-              <button id="extractReadingBtn" class="small" type="button">从当前文本提取 Reading</button>
+              <button id="extractReadingBtn" class="small" type="button">从当前文本提取正文</button>
               <button id="restorePdfTextBtn" class="small" type="button" hidden>查看完整 PDF 文本</button>
-              <span id="extractStatus" class="extract-status">适用于带文字层的 PDF；扫描版可用 OCR，建议先填 Reading 所在页码。</span>
+              <span id="extractStatus" class="extract-status">科研论文会尝试识别 Title、Abstract、Introduction、Methods、Results、Discussion 和 References。</span>
             </div>
-            <div class="source-panel" aria-label="官方样题来源">
+            <div class="source-panel" aria-label="使用提示">
               <div class="source-note">
-                官方免费材料可打开后下载或复制，再用上方导入。页面不内置受版权保护的真题全文；你已有的合法 PDF/TXT 可直接导入本地阅读。
+                论文 PDF 如果有文字层会直接抽取；扫描版可以先填页码范围再 OCR。论文助手会自动生成摘要、章节导航、术语候选和笔记区。
               </div>
               <div class="source-grid">
                 <div class="source-card">
-                  <strong>IELTS.org 学术类阅读样题 PDF</strong>
-                  <span>官方 Academic Reading sample tasks，适合下载后导入。</span>
+                  <strong>论文正文提取</strong>
+                  <span>优先从 Abstract 或 Introduction 开始，默认在 References 前停止。</span>
                   <div class="source-actions">
-                    <a class="button-link small primary" href="https://ielts.org/cdn/Sample-tests/ielts-academic-reading-sample-tasks-2023.pdf" target="_blank" rel="noopener">打开 PDF</a>
-                    <a class="button-link small" href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions/academic-test" target="_blank" rel="noopener">来源页</a>
+                    <button id="paperModeBtn" class="small primary" type="button">切到论文模式</button>
                   </div>
                 </div>
                 <div class="source-card">
-                  <strong>IELTS.org 培训类阅读样题 PDF</strong>
-                  <span>官方 General Training Reading sample tasks，适合下载后导入。</span>
+                  <strong>扫描版 PDF</strong>
+                  <span>扫描版请先填写页码范围，OCR 完成后再自动提取正文。</span>
                   <div class="source-actions">
-                    <a class="button-link small primary" href="https://ielts.org/cdn/Sample-tests/ielts-general-reading-sample-tasks-2023.pdf" target="_blank" rel="noopener">打开 PDF</a>
-                    <a class="button-link small" href="https://ielts.org/take-a-test/preparation-resources/sample-test-questions/general-training-test" target="_blank" rel="noopener">来源页</a>
+                    <button id="focusOcrBtn" class="small primary" type="button">填写 OCR 页码</button>
                   </div>
                 </div>
                 <div class="source-card">
-                  <strong>British Council 阅读练习</strong>
-                  <span>官方免费阅读练习页，含 Academic 与 General Training 入口。</span>
+                  <strong>生词和术语</strong>
+                  <span>点正文单词查中文，论文助手会按频率列出术语候选。</span>
                   <div class="source-actions">
-                    <a class="button-link small primary" href="https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests/reading" target="_blank" rel="noopener">打开网页</a>
+                    <button id="focusTermsBtn" class="small primary" type="button">查看术语</button>
                   </div>
                 </div>
                 <div class="source-card">
-                  <strong>IDP IELTS Practice Tests</strong>
-                  <span>IDP 官方练习题入口，可按需下载或复制文本后导入。</span>
+                  <strong>笔记导出</strong>
+                  <span>论文标题、摘要、章节、术语和阅读笔记可以导出为 TXT。</span>
                   <div class="source-actions">
-                    <a class="button-link small primary" href="https://ielts.idp.com/about/practice-tests/new-practice-tests" target="_blank" rel="noopener">打开网页</a>
+                    <button id="focusNotesBtn" class="small primary" type="button">写论文笔记</button>
                   </div>
                 </div>
               </div>
@@ -814,6 +905,34 @@
       </div>
 
       <aside class="side">
+        <section class="panel paper-helper" aria-labelledby="paper-helper-title">
+          <div class="panel-header">
+            <h2 id="paper-helper-title">论文助手</h2>
+            <span>结构化阅读</span>
+          </div>
+          <div class="paper-body">
+            <div class="paper-title">
+              <strong id="paperTitle">未导入论文</strong>
+              <span id="paperMeta">导入论文 PDF/TXT 后自动识别标题、摘要和章节。</span>
+            </div>
+            <div id="paperAbstract" class="paper-abstract">摘要会显示在这里。</div>
+            <div>
+              <div class="source">章节导航</div>
+              <div id="paperOutline" class="outline-list"></div>
+            </div>
+            <div>
+              <div class="source">术语候选</div>
+              <div id="termList" class="term-list"></div>
+            </div>
+            <textarea id="paperNote" class="note-box" placeholder="记录这篇论文的研究问题、方法、结果、疑问或可复用句型。"></textarea>
+            <div class="vocab-tools">
+              <button id="savePaperNoteBtn" class="small primary" type="button">保存笔记</button>
+              <button id="exportPaperNoteBtn" class="small" type="button">导出笔记</button>
+              <button id="copyAbstractBtn" class="small" type="button">复制摘要</button>
+            </div>
+          </div>
+        </section>
+
         <section class="panel lookup" aria-labelledby="lookup-title">
           <div class="panel-header">
             <h2 id="lookup-title">查词</h2>
@@ -893,7 +1012,8 @@
       vocab: "ielts-reader-vocab-v1",
       translations: "ielts-reader-translations-v1",
       cache: "ielts-reader-cache-v1",
-      fontSize: "ielts-reader-font-size-v1"
+      fontSize: "ielts-reader-font-size-v1",
+      paperNotes: "research-reader-paper-notes-v1"
     };
     const PDFJS_SCRIPT = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
     const PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -902,15 +1022,25 @@
     const TESSERACT_CORE = "https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core.wasm.js";
     const TESSERACT_LANG = "https://tessdata.projectnaptha.com/4.0.0";
 
-    const SAMPLE_ARTICLE = `Urban Trees and Human Attention
+    const SAMPLE_ARTICLE = `Lightweight Vocabulary Support for Scientific Paper Reading
 
-In many large cities, trees are often treated as decorative additions rather than essential infrastructure. Yet recent studies suggest that street trees can influence the way people use public space, the amount of heat absorbed by pavements, and even the concentration needed for demanding mental tasks. A shaded avenue is not simply more pleasant; it can change how long pedestrians remain outside and how confidently children travel to school.
+Abstract
+Reading scientific papers in a second language requires both domain comprehension and vocabulary acquisition. This paper presents a lightweight browser-based reader that extracts paper sections, supports word-level translation, and records unfamiliar vocabulary with frequency counts. The system is designed for local use, so imported documents and vocabulary records remain on the user's device. A small prototype demonstrates that section navigation, abstract extraction, and term highlighting can reduce the friction of close reading.
 
-Researchers have also noticed that the benefits of trees are unevenly distributed. Wealthier districts usually have older trees, wider planting strips, and maintenance budgets that protect roots from construction damage. In contrast, poorer neighbourhoods may receive young trees that struggle to survive in compacted soil. This difference matters because the cooling effect of a mature canopy cannot be replaced quickly.
+1 Introduction
+Graduate students and early-career researchers often read many papers outside their strongest language. Although machine translation can provide sentence-level assistance, researchers still need to build stable academic vocabulary and recognize repeated technical terms. A reading tool that combines document structure, vocabulary lookup, and persistent notes can support this workflow.
 
-For city planners, the central challenge is not whether trees are useful, but how to manage them as living systems. A tree planted in the wrong location may interfere with pipes or block visibility at junctions. However, careful species selection, regular monitoring, and community involvement can reduce these risks. When residents understand why a tree has been chosen and how it should be watered during dry periods, survival rates often improve.
+2 Method
+The prototype accepts pasted text, TXT files, and PDF files. When a PDF contains a text layer, the browser extracts page text directly. When a PDF is scanned, the reader can render selected pages and run OCR in the browser. The extracted text is then processed with simple rules to locate common paper sections such as Abstract, Introduction, Methods, Results, Discussion, Conclusion, and References.
 
-The argument for urban trees is therefore practical rather than sentimental. They lower temperatures, absorb pollutants, soften noise, and create routes that people are willing to walk. In a warming climate, such ordinary details may become a decisive part of public health.`;
+3 Results
+The prototype provides a structured reading panel, a clickable article view, and a local vocabulary notebook. Repeated technical terms are ranked by frequency, allowing readers to notice terminology that may be central to the paper. Each saved word stores a translation, occurrence count, timestamp, and example context.
+
+4 Discussion
+This approach does not replace expert reading or full translation. Instead, it creates a focused environment for close reading, vocabulary review, and paper-specific notes. Future work may add citation extraction, paragraph summaries, and synchronized cloud storage.
+
+5 Conclusion
+A browser-only research paper reader can provide useful support without requiring installation or account registration. By keeping OCR, translation lookup, notes, and vocabulary tracking in one interface, the tool helps researchers read English papers more efficiently.`;
 
     const BASE_DICT = {
       ability: "能力", able: "能够的", absorb: "吸收", absorbed: "被吸收的", academic: "学术的",
@@ -964,7 +1094,9 @@ The argument for urban trees is therefore practical rather than sentimental. The
     const els = {
       articleInput: document.getElementById("articleInput"),
       fileInput: document.getElementById("fileInput"),
+      documentMode: document.getElementById("documentMode"),
       extractReadingToggle: document.getElementById("extractReadingToggle"),
+      skipReferencesToggle: document.getElementById("skipReferencesToggle"),
       autoOcrToggle: document.getElementById("autoOcrToggle"),
       ocrPageRange: document.getElementById("ocrPageRange"),
       ocrCurrentPdfBtn: document.getElementById("ocrCurrentPdfBtn"),
@@ -979,6 +1111,19 @@ The argument for urban trees is therefore practical rather than sentimental. The
       exportCsvBtn: document.getElementById("exportCsvBtn"),
       exportJsonBtn: document.getElementById("exportJsonBtn"),
       exportTxtBtn: document.getElementById("exportTxtBtn"),
+      paperModeBtn: document.getElementById("paperModeBtn"),
+      focusOcrBtn: document.getElementById("focusOcrBtn"),
+      focusTermsBtn: document.getElementById("focusTermsBtn"),
+      focusNotesBtn: document.getElementById("focusNotesBtn"),
+      paperTitle: document.getElementById("paperTitle"),
+      paperMeta: document.getElementById("paperMeta"),
+      paperAbstract: document.getElementById("paperAbstract"),
+      paperOutline: document.getElementById("paperOutline"),
+      termList: document.getElementById("termList"),
+      paperNote: document.getElementById("paperNote"),
+      savePaperNoteBtn: document.getElementById("savePaperNoteBtn"),
+      exportPaperNoteBtn: document.getElementById("exportPaperNoteBtn"),
+      copyAbstractBtn: document.getElementById("copyAbstractBtn"),
       articleView: document.getElementById("articleView"),
       wordCount: document.getElementById("wordCount"),
       uniqueCount: document.getElementById("uniqueCount"),
@@ -1008,6 +1153,7 @@ The argument for urban trees is therefore practical rather than sentimental. The
     let vocab = readJson(STORAGE.vocab, {});
     let customTranslations = readJson(STORAGE.translations, {});
     let translationCache = readJson(STORAGE.cache, {});
+    let paperNotes = readJson(STORAGE.paperNotes, {});
     let selected = null;
     let lookupToken = 0;
     let currentArticle = "";
@@ -1015,6 +1161,8 @@ The argument for urban trees is therefore practical rather than sentimental. The
     let lastFullPdfText = "";
     let lastPdfFile = null;
     let ocrRunning = false;
+    let currentPaperAnalysis = null;
+    let currentPaperId = "untitled-paper";
 
     function readJson(key, fallback) {
       try {
@@ -1189,8 +1337,8 @@ The argument for urban trees is therefore practical rather than sentimental. The
         els.articleInput.value = ocrText;
         renderArticle(ocrText);
 
-        if (els.extractReadingToggle.checked) {
-          const extraction = extractReadingSections(ocrText);
+        if (els.extractReadingToggle.checked && els.documentMode.value !== "full") {
+          const extraction = extractByMode(ocrText);
           if (useExtractionResult(extraction, "OCR 文本")) {
             return extraction.text;
           }
@@ -1359,14 +1507,290 @@ The argument for urban trees is therefore practical rather than sentimental. The
 
     function useExtractionResult(result, sourceLabel) {
       if (!result.sections.length) {
-        els.extractStatus.textContent = "没有稳定识别到 Reading 边界，已保留完整文本。可手动删除非阅读部分。";
+        els.extractStatus.textContent = "没有稳定识别到正文边界，已保留完整文本。可手动删除无关部分。";
         return false;
       }
       els.articleInput.value = result.text;
       renderArticle(result.text);
       const words = result.sections.reduce((sum, section) => sum + section.wordCount, 0);
-      els.extractStatus.textContent = `${sourceLabel}：已提取 ${result.sections.length} 个 Reading 部分，约 ${words} 个英文词。`;
+      const label = result.kind === "paper" ? "论文正文" : "Reading 部分";
+      els.extractStatus.textContent = `${sourceLabel}：已提取 ${result.sections.length} 个${label}片段，约 ${words} 个英文词。`;
       return true;
+    }
+
+    function extractByMode(text) {
+      if (els.documentMode.value === "full") return null;
+      if (els.documentMode.value === "ielts") return extractReadingSections(text);
+      return extractPaperSections(text);
+    }
+
+    function extractPaperSections(text) {
+      const cleaned = cleanPdfText(text);
+      const firstMarker = findFirstPaperMarker(cleaned);
+      const start = findPaperStart(cleaned, firstMarker);
+      const end = findPaperEnd(cleaned, start);
+      const raw = cleaned.slice(start, end).trim();
+      const wordCount = (raw.match(/[A-Za-z]+/g) || []).length;
+      if (wordCount < 120) {
+        return { kind: "paper", text: cleaned, sections: [], confidence: 0 };
+      }
+      const outline = findPaperSections(raw, start);
+      const sections = outline.length ? outline.map(section => ({
+        start: section.index,
+        end,
+        score: 82,
+        type: "paper-section",
+        title: section.title,
+        wordCount: Math.max(1, Math.round(wordCount / outline.length)),
+        text: raw
+      })) : [{
+        start,
+        end,
+        score: 55,
+        type: "paper-body",
+        title: "Paper body",
+        wordCount,
+        text: raw
+      }];
+      return {
+        kind: "paper",
+        text: tidyPaperText(raw),
+        sections,
+        confidence: outline.length ? 86 : 55
+      };
+    }
+
+    function findFirstPaperMarker(text) {
+      const patterns = [
+        /(?:^|\n)\s*Abstract\b/i,
+        /(?:^|\n)\s*(?:1\.?\s*)?Introduction\b/i,
+        /(?:^|\n)\s*Keywords?\b/i
+      ];
+      const matches = patterns
+        .map(pattern => {
+          const match = pattern.exec(text);
+          return match ? match.index + (match[0].startsWith("\n") ? 1 : 0) : -1;
+        })
+        .filter(index => index >= 0);
+      return matches.length ? Math.min(...matches) : -1;
+    }
+
+    function findPaperStart(text, marker) {
+      if (marker < 0) return 0;
+      const before = text.slice(Math.max(0, marker - 900), marker);
+      const lines = before.split("\n");
+      let offset = marker - before.length;
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !/^--- Page \d+/.test(trimmed) && !/^\[?Page \d+\]?$/.test(trimmed)) {
+          return Math.max(0, offset);
+        }
+        offset += line.length + 1;
+      }
+      return marker;
+    }
+
+    function findPaperEnd(text, start) {
+      if (!els.skipReferencesToggle.checked) return text.length;
+      const tail = text.slice(start + 1200);
+      const match = /(?:^|\n)\s*(?:References|Bibliography|Works\s+Cited)\b/i.exec(tail);
+      return match ? start + 1200 + match.index : text.length;
+    }
+
+    function tidyPaperText(text) {
+      return cleanPdfText(text)
+        .replace(/^--- Page (\d+) ---$/gm, "[Page $1]")
+        .replace(/^--- Page (\d+) OCR ---$/gm, "[Page $1 OCR]")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+    }
+
+    function findPaperSections(text, baseIndex = 0) {
+      const patterns = [
+        "Abstract", "Introduction", "Background", "Related Work", "Literature Review",
+        "Methods?", "Materials and Methods", "Methodology", "Experiments?", "Experimental Setup",
+        "Results", "Discussion", "Results and Discussion", "Conclusion", "Conclusions",
+        "Limitations", "Acknowledg(?:e)?ments?", "References", "Appendix"
+      ];
+      const re = new RegExp(`(?:^|\\n)\\s*(?:(\\d+(?:\\.\\d+)*)\\s+)?(${patterns.join("|")})\\b[^\\n]{0,90}`, "gi");
+      const sections = [];
+      let match;
+      while ((match = re.exec(text)) !== null) {
+        const index = baseIndex + match.index + (match[0].startsWith("\n") ? 1 : 0);
+        const title = match[0].replace(/\s+/g, " ").trim();
+        if (sections.some(section => Math.abs(section.index - index) < 20)) continue;
+        sections.push({ index, title });
+      }
+      return sections.slice(0, 18);
+    }
+
+    const PAPER_STOPWORDS = new Set([
+      "about", "above", "after", "again", "against", "among", "analysis", "another", "article",
+      "because", "between", "could", "data", "different", "during", "effect", "example",
+      "first", "following", "found", "from", "further", "however", "important", "including",
+      "into", "large", "method", "methods", "model", "models", "more", "most", "paper",
+      "part", "present", "previous", "process", "provide", "results", "same", "section",
+      "several", "should", "show", "shown", "significant", "study", "studies", "such",
+      "system", "systems", "table", "than", "that", "their", "these", "this", "those",
+      "through", "using", "used", "were", "when", "where", "which", "while", "with",
+      "within", "without", "would"
+    ]);
+
+    function analyzePaper(text) {
+      const cleaned = cleanPdfText(text);
+      if (!cleaned) {
+        return {
+          title: "未导入论文",
+          abstract: "摘要会显示在这里。",
+          sections: [],
+          terms: [],
+          wordCount: 0
+        };
+      }
+      const title = extractPaperTitle(cleaned);
+      const abstract = extractAbstract(cleaned);
+      const sections = findPaperSections(cleaned, 0).filter(section => !/References|Appendix/i.test(section.title));
+      const terms = extractTechnicalTerms(cleaned);
+      return {
+        title,
+        abstract,
+        sections,
+        terms,
+        wordCount: (cleaned.match(/[A-Za-z]+/g) || []).length
+      };
+    }
+
+    function extractPaperTitle(text) {
+      const marker = findFirstPaperMarker(text);
+      const candidateText = marker > 0 ? text.slice(0, marker) : text.slice(0, 900);
+      const lines = candidateText
+        .split("\n")
+        .map(line => line.trim())
+        .filter(line => line && !/^--- Page \d+/.test(line) && !/^\[?Page \d+\]?$/.test(line));
+      const candidates = lines.filter(line => {
+        const words = line.match(/[A-Za-z]+/g) || [];
+        return words.length >= 4 && words.length <= 28 && !/^(Abstract|Keywords?|Introduction|Journal|Vol\.|No\.|arXiv|doi:)/i.test(line);
+      });
+      return candidates[0] || "未识别标题";
+    }
+
+    function extractAbstract(text) {
+      const match = /(?:^|\n)\s*Abstract\b[:\s-]*(\n?[\s\S]{80,2200}?)(?=\n\s*(?:Keywords?|Index Terms|1\.?\s*Introduction|Introduction|Background|I\.\s*Introduction)\b)/i.exec(text);
+      if (!match) return "未识别到摘要。可以查看完整文本，或手动复制摘要到笔记区。";
+      return cleanPdfText(match[1]).replace(/\n+/g, " ").trim();
+    }
+
+    function extractTechnicalTerms(text) {
+      const freq = new Map();
+      const words = text.match(/[A-Za-z][A-Za-z-]{3,}/g) || [];
+      for (const raw of words) {
+        const word = normalizeWord(raw.replace(/-+/g, "-"));
+        if (word.length < 7 || PAPER_STOPWORDS.has(word) || /^\d/.test(word)) continue;
+        freq.set(word, (freq.get(word) || 0) + 1);
+      }
+
+      const acronyms = text.match(/\b[A-Z]{2,}(?:-[A-Z0-9]+)?\b/g) || [];
+      for (const acronym of acronyms) {
+        if (acronym.length < 3 || acronym.length > 12) continue;
+        freq.set(acronym, (freq.get(acronym) || 0) + 2);
+      }
+
+      return [...freq.entries()]
+        .filter(([, count]) => count >= 2)
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, 28)
+        .map(([term, count]) => ({ term, count }));
+    }
+
+    function renderPaperHelper() {
+      currentPaperAnalysis = analyzePaper(currentArticle);
+      currentPaperId = makePaperId(currentPaperAnalysis.title);
+      els.paperTitle.textContent = currentPaperAnalysis.title;
+      els.paperMeta.textContent = `${currentPaperAnalysis.wordCount} 词 · ${currentPaperAnalysis.sections.length} 个章节 · ${currentPaperAnalysis.terms.length} 个术语候选`;
+      els.paperAbstract.textContent = currentPaperAnalysis.abstract;
+
+      els.paperOutline.innerHTML = "";
+      if (!currentPaperAnalysis.sections.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "暂未识别到章节标题。";
+        els.paperOutline.appendChild(empty);
+      } else {
+        for (const section of currentPaperAnalysis.sections) {
+          const button = makeButton(section.title, "outline-item", () => scrollToArticleIndex(section.index));
+          els.paperOutline.appendChild(button);
+        }
+      }
+
+      els.termList.innerHTML = "";
+      if (!currentPaperAnalysis.terms.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "暂未识别到高频术语。";
+        els.termList.appendChild(empty);
+      } else {
+        for (const item of currentPaperAnalysis.terms) {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "term-chip";
+          chip.textContent = `${item.term} ×${item.count}`;
+          chip.addEventListener("click", () => {
+            scrollToText(item.term);
+            copyText(item.term);
+          });
+          els.termList.appendChild(chip);
+        }
+      }
+
+      const activeDraft = document.activeElement === els.paperNote ? els.paperNote.value : null;
+      els.paperNote.value = activeDraft ?? paperNotes[currentPaperId] ?? "";
+    }
+
+    function makePaperId(title) {
+      const key = String(title || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+      return key || "untitled-paper";
+    }
+
+    function savePaperNote() {
+      paperNotes[currentPaperId] = els.paperNote.value.trim();
+      saveJson(STORAGE.paperNotes, paperNotes);
+      showToast("论文笔记已保存。");
+    }
+
+    function exportPaperNote() {
+      const analysis = currentPaperAnalysis || analyzePaper(currentArticle);
+      const lines = [
+        `Title: ${analysis.title}`,
+        "",
+        "Abstract:",
+        analysis.abstract,
+        "",
+        "Sections:",
+        ...(analysis.sections.length ? analysis.sections.map(section => `- ${section.title}`) : ["- 未识别"]),
+        "",
+        "Terms:",
+        ...(analysis.terms.length ? analysis.terms.map(item => `- ${item.term} (${item.count})`) : ["- 未识别"]),
+        "",
+        "Notes:",
+        els.paperNote.value.trim() || "(empty)"
+      ];
+      downloadFile(lines.join("\n"), "paper-notes.txt", "text/plain;charset=utf-8", false);
+      showToast("已导出论文笔记。");
+    }
+
+    function scrollToArticleIndex(index) {
+      const target = [...els.articleView.querySelectorAll(".word")]
+        .find(node => Number(node.dataset.start || 0) >= index);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.classList.add("selected");
+        setTimeout(() => target.classList.remove("selected"), 1200);
+      }
+    }
+
+    function scrollToText(text) {
+      const index = currentArticle.toLowerCase().indexOf(String(text).toLowerCase());
+      if (index >= 0) scrollToArticleIndex(index);
     }
 
     function readTextFile(file) {
@@ -1437,6 +1861,7 @@ The argument for urban trees is therefore practical rather than sentimental. The
         els.articleView.className = "article empty";
         els.articleView.textContent = "还没有文章。粘贴或导入文本后点击“开始阅读”。";
         updateReaderStats([]);
+        renderPaperHelper();
         return;
       }
 
@@ -1468,6 +1893,7 @@ The argument for urban trees is therefore practical rather than sentimental. The
       }
 
       updateReaderStats(words);
+      renderPaperHelper();
     }
 
     function updateReaderStats(words) {
@@ -1713,7 +2139,7 @@ The argument for urban trees is therefore practical rather than sentimental. The
         return;
       }
       const payload = {
-        app: "IELTS 阅读查词本",
+        app: "科研论文阅读器",
         exportedAt: new Date().toISOString(),
         totalWords: items.length,
         totalRecords: items.reduce((sum, item) => sum + Number(item.count || 0), 0),
@@ -1751,12 +2177,12 @@ The argument for urban trees is therefore practical rather than sentimental. The
         .sort((a, b) => b.count - a.count || a.word.localeCompare(b.word));
     }
 
-    function downloadFile(content, extension, mimeType) {
+    function downloadFile(content, extension, mimeType, useVocabPrefix = true) {
       const blob = new Blob(["\ufeff" + content], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `ielts-vocab-${new Date().toISOString().slice(0, 10)}.${extension}`;
+      link.download = useVocabPrefix ? `research-vocab-${new Date().toISOString().slice(0, 10)}.${extension}` : extension;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -1796,6 +2222,39 @@ The argument for urban trees is therefore practical rather than sentimental. The
       renderArticle(SAMPLE_ARTICLE);
       showToast("已载入示例文章。");
     });
+    els.paperModeBtn.addEventListener("click", () => {
+      els.documentMode.value = "paper";
+      els.extractStatus.textContent = "已切到科研论文模式。PDF 导入会尝试提取论文正文并跳过 References。";
+    });
+    els.focusOcrBtn.addEventListener("click", () => {
+      els.ocrPageRange.focus();
+      els.ocrPageRange.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    els.focusTermsBtn.addEventListener("click", () => {
+      els.termList.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    els.focusNotesBtn.addEventListener("click", () => {
+      els.paperNote.focus();
+      els.paperNote.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    els.savePaperNoteBtn.addEventListener("click", savePaperNote);
+    els.paperNote.addEventListener("input", () => {
+      paperNotes[currentPaperId] = els.paperNote.value;
+      saveJson(STORAGE.paperNotes, paperNotes);
+    });
+    els.exportPaperNoteBtn.addEventListener("click", exportPaperNote);
+    els.copyAbstractBtn.addEventListener("click", () => {
+      const abstract = currentPaperAnalysis ? currentPaperAnalysis.abstract : "";
+      if (!abstract || abstract.startsWith("未识别")) {
+        showToast("暂无可复制的摘要。");
+        return;
+      }
+      copyText(abstract);
+    });
+    els.documentMode.addEventListener("change", () => {
+      const label = els.documentMode.value === "paper" ? "科研论文" : els.documentMode.value === "ielts" ? "雅思阅读" : "完整文本";
+      els.extractStatus.textContent = `当前模式：${label}。`;
+    });
     els.pasteSavedBtn.addEventListener("click", () => {
       const saved = localStorage.getItem(STORAGE.article) || "";
       els.articleInput.value = saved;
@@ -1824,7 +2283,7 @@ The argument for urban trees is therefore practical rather than sentimental. The
           els.restorePdfTextBtn.hidden = false;
           if (!lastFullPdfText.trim()) {
             els.restorePdfTextBtn.hidden = true;
-            els.extractStatus.textContent = `没有从 PDF 中提取到文字。这个文件可能是扫描版，请填写 Reading 页码范围后点“OCR 当前 PDF”。`;
+            els.extractStatus.textContent = `没有从 PDF 中提取到文字。这个文件可能是扫描版，请填写论文正文所在页码后点“OCR 当前 PDF”。`;
             if (els.autoOcrToggle.checked) {
               const ocrText = await ocrPdfFile(file, { allowLarge: false });
               showToast(ocrText ? "OCR 完成。" : "需要填写 OCR 页码范围后再运行。");
@@ -1833,10 +2292,10 @@ The argument for urban trees is therefore practical rather than sentimental. The
             showToast("PDF 没有文字层，请使用 OCR。");
             return;
           }
-          if (els.extractReadingToggle.checked) {
-            const extraction = extractReadingSections(lastFullPdfText);
+          if (els.extractReadingToggle.checked && els.documentMode.value !== "full") {
+            const extraction = extractByMode(lastFullPdfText);
             if (useExtractionResult(extraction, file.name)) {
-              showToast(`已从 ${file.name} 提取 Reading 部分`);
+              showToast(`已从 ${file.name} 提取正文`);
               return;
             }
           }
@@ -1846,7 +2305,7 @@ The argument for urban trees is therefore practical rather than sentimental. The
           lastPdfFile = null;
           els.ocrCurrentPdfBtn.hidden = true;
           text = await readTextFile(file);
-          els.extractStatus.textContent = "已读取文本文件；如包含整套试题，可点击“从当前文本提取 Reading”。";
+          els.extractStatus.textContent = "已读取文本文件；如包含整篇论文，可点击“从当前文本提取正文”。";
         }
         if (!text.trim()) throw new Error("没有从文件中提取到文本");
         els.articleInput.value = text;
@@ -1879,11 +2338,15 @@ The argument for urban trees is therefore practical rather than sentimental. The
         showToast("当前没有可提取的文本。");
         return;
       }
-      const extraction = extractReadingSections(text);
+      const extraction = extractByMode(text);
+      if (!extraction) {
+        showToast("当前是完整文本模式，不需要提取。");
+        return;
+      }
       if (useExtractionResult(extraction, "当前文本")) {
-        showToast("已提取 Reading 部分。");
+        showToast("已提取正文。");
       } else {
-        showToast("未识别到清晰的 Reading 边界。");
+        showToast("未识别到清晰的正文边界。");
       }
     });
     els.restorePdfTextBtn.addEventListener("click", () => {
